@@ -38,7 +38,7 @@ You're reading it!
 ### Notebook Analysis
 #### 1. Run the functions provided in the notebook on test images (first with the test data provided, next on data you have recorded). Add/modify functions to allow for color selection of obstacles and rock samples.
 
-I add two functions for clor selection of obstacles and rock samples.
+I add two functions for color selection of obstacles and rock samples.
 - the function for the obstacles is `color_obstacles`. It is actually the inverse of the function `color_thresh`. The threshold is the same as the road `(160, 160, 160)`. Since in numpy array, True is 1, False is 0, I directly define a variable `below_thresh` as the condition on the `img`, which makes the elements which below the threshold 1, above the threshold 0.
 
 ```python
@@ -60,6 +60,8 @@ def color_rock(img, rgb_thresh=(130, 100, 60)):
     return rock_img
 ```
 ![alt text][image3]
+
+
 
 #### 2. Populate the `process_image()` function with the appropriate analysis steps to map pixels identifying navigable terrain, obstacles and rock samples into a worldmap.  Run `process_image()` on your test data using the `moviepy` functions provided to create video output of your result.
 Basically I followed the TODO list in the `process_image()` function.
@@ -109,8 +111,8 @@ front_pix = np.sum(Rover.nav_angles < 0.5) + np.sum(Rover.nav_angles > -0.5)
 
 In order to traverse all of the maps, the strategy that I used is to make the rover prefer turn right more than turn left (prefer left than right also works). So I add the following code
 ```python
-if front_pix < Rover.stop_forward + 50:
-    Rover.throttle = 0
+if front_pix < Rover.stop_forward + 100:
+    Rover.throttle = -0.1
     #Rover.brake = Rover.brake_set/50
     if right_pix >= left_pix:
         Rover.steer = -15
@@ -120,7 +122,7 @@ if front_pix < Rover.stop_forward + 50:
 elif right_pix >= Rover.stop_forward:
     Rover.steer = np.clip(np.mean(Rover.nav_angles[Rover.nav_angles <= 0.5] * 180/np.pi), -15, 15)
 else:
-    Rover.steer = np.clip(np.mean(Rover.nav_angles * 180/np.pi)-4.5, -15, 15)
+    Rover.steer = np.clip(np.mean(Rover.nav_angles * 180/np.pi)-4, -15, 15)
 ```
 when the `Rover.mode` is `'forward'` and `len(Rover.nav_angles) >= Rover.stop_forward`. The first condition is to check if there is an obstacle in front of the rover, If it is true, then stop the throttle and turn right(left) if the right(left)-hand side is more clear than left(right)-hand side.
 
@@ -140,7 +142,102 @@ if right_pix < Rover.go_forward-200:
 ```
 which means that when the rover is stopped, the rover will turn left until it finds enough space on the right. This will prevent the rover stuck by stones.
 
+__Modifications and feedback after last submission__
 
+In the file `perception.py`, the function `color_thresh()` now can select path, obstacles and samples based on the choice of `rgb_thresh`.
+```python
+def color_thresh(img, rgb_thresh=(160, 160, 160)):
+    color_select = np.zeros_like(img[:,:,0])
+    if rgb_thresh[2] == 160: # for path
+        thresh = (img[:,:,0] > rgb_thresh[0]) \
+                    & (img[:,:,1] > rgb_thresh[1]) \
+                    & (img[:,:,2] > rgb_thresh[2])
+    elif rgb_thresh[2] == 161: # for obstacles
+        thresh = ((img[:,:,0] < rgb_thresh[0]) \
+                    | (img[:,:,1] < rgb_thresh[1]) \
+                    | (img[:,:,2] < rgb_thresh[2]))
+    elif rgb_thresh[2] < 100: # for samples
+        thresh = ((img[:,:,0] > rgb_thresh[0]) \
+                    & (img[:,:,1] > rgb_thresh[1]) \
+                    & (img[:,:,2] < rgb_thresh[2]))
+    # Index the array of zeros with the boolean array and set to 1
+    color_select[thresh] = 1
+    # Return the binary image
+    return color_select
+```
+At last of the `perception_step()` function, I introduce `Rover.sample_dists` and `Rover.sample_angles` to capture the pixel distance and the angle coordinate of the sample in the rover-centric reference frame polar coordinate
+```python
+Rover.sample_dists, Rover.sample_angles = to_polar_coords(xpix_r, ypix_r)
+```
+
+In the file `decision.py`, the pickup feature is added. The distance between rover and sample are captured by variables `rover_sample_dists` and `rover_sample_dists_min`
+```python
+# the distance between rover and the samples
+rover_sample_dists = np.sqrt((Rover.samples_pos[0] - Rover.pos[0])**2 + \
+                    (Rover.samples_pos[1] - Rover.pos[1])**2)
+# the distance between rover and the closest sample
+rover_sample_dists_min = np.min(rover_sample_dists)
+```
+When rover is in mode `'forward'`, it first checks whether it is near the sample
+```python
+# If in a state where want to pickup a rock send pickup command
+if Rover.near_sample and Rover.vel == 0 and not Rover.picking_up:
+    Rover.send_pickup = True
+# if rover is near sample but still moving, brake!
+elif Rover.near_sample and Rover.vel != 0:
+    Rover.throttle = 0
+    # Set brake to stored brake value
+    Rover.brake = Rover.brake_set
+    Rover.steer = 0
+    Rover.mode = 'stop'
+```
+this is mainly because there might be a situation that the sample is not in front of the rover because the rover might not brake properly. In this case, the sample is not shown in rover's camera, but it can be picked up.
+
+Then we check if the rover has a clear front and if the sample is too far away
+```python
+elif ((len(Rover.nav_angles) >= Rover.stop_forward) and \
+    ((len(Rover.sample_angles) < 5) or \
+     ((len(Rover.sample_angles) >= 5) and (rover_sample_dists_min >=5)))):
+```
+In this case, the rover just move normally, as shown in the first submission, the rover prefer turn right. The condition `((len(Rover.sample_angles) >= 5) and (rover_sample_dists_min >=5))` is to make sure that the false identification of the sample would not affect the motion of the rover.
+
+When the rover observed the sample and close enough
+```python
+elif ((len(Rover.nav_angles) >= Rover.stop_forward) and \
+      (len(Rover.sample_angles) >= 5)):
+```
+the rover will turn to the sample
+```python
+Rover.steer = np.clip(np.mean(Rover.sample_angles * 180/np.pi), -15, 15)
+```
+and move slowly towards the sample
+```python
+# if rover near sample, stop!
+if (rover_sample_dists_min < 1) or Rover.near_sample:
+    # Set mode to "stop" and hit the brakes!
+    Rover.throttle = 0
+    # Set brake to stored brake value
+    Rover.brake = Rover.brake_set
+    Rover.steer = 0
+    Rover.mode = 'stop'
+else: # if rover far from sample, move slowly towards the sample
+    if Rover.vel <= 0.2: # if rover stops, move!
+        # Set throttle value to throttle setting
+        Rover.throttle = Rover.throttle_set - 0.3
+    elif Rover.vel >= 1: # if rover move too fast, brake!
+        Rover.throttle = 0
+        Rover.brake = 0.1
+    else: # otherwise keep moving
+        Rover.throttle = 0
+        Rover.brake = 0
+```
+
+When the rover mode is `'stop'`, and the rover is not moving 'Rover.vel <= 0.2', we first check if the rover near the sample. If so, pick up the sample
+```python
+# if we can pick up the sample, pick up!
+if Rover.near_sample and Rover.vel == 0 and not Rover.picking_up:
+    Rover.send_pickup = True
+```
 
 #### 2. Launching in autonomous mode your rover can navigate and map autonomously.  Explain your results and how you might improve them in your writeup.  
 
@@ -152,10 +249,10 @@ self.throttle_set = 0.5
 self.brake_set = 10
 self.stop_forward = 50
 self.go_forward = 600
-self.max_vel = 2.5
+self.max_vel = 2
 ```
-Most of the time, the rover can navigate the map autonomouly, and it will traverse more than 98% of the map, and find at least 5 rocks in 5 or 6 mins. If set the lower `max_vel` and lower `throttle_set`, the performance is better. A better choice of `max_vel` would be 2.
+Most of the time, the rover can navigate the map autonomouly, and it will traverse more than 98% of the map, and identify at least 5 samples and pickup around 3 of them in 7 to 10 mins. If set the lower `max_vel` and lower `throttle_set`, the performance is better. A better choice of `max_vel` would be smaller than 2.
 
-The rover performs not very well when it meets several obstacles in the center of the map. Part of the reason is that the obstacles are not a solid... when the rover hit the obstacles, the camera somehow see through and gives wrong information. I think in the real case, the rover performs better :D In order to deal with the bug, one of the possible way is raise the threshold of the `front_pix` a bit higher. Such that the rover can make its decision before it hits the obstacles.
+The rover performs not well when it meets several obstacles in the center of the map. Part of the reason is that the obstacles are not solid... when the rover hit the obstacles, the camera somehow see through and gives wrong information. I think in the real case, the rover performs better :D In order to deal with the bug, one of the possible way is raise the threshold of the `front_pix` a bit higher. Such that the rover can make its decision before it hits the obstacles.
 
 One important variable that I didn't use is `Rover.nav_dists`. By using it as condition, we may control the acceleration and velocity more accurately. 

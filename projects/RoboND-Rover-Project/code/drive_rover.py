@@ -70,6 +70,8 @@ class RoverState():
         # Update this image with the positions of navigable terrain
         # obstacles and rock samples
         self.worldmap = np.zeros((200, 200, 3), dtype=np.float)
+        self.sample_dists = None # distances of sample detected
+        self.sample_angles = None # angles of sample detected
         self.samples_pos = None # To store the actual sample positions
         self.samples_found = 0 # To count the number of samples found
         self.near_sample = 0 # Will be set to telemetry value data["near_sample"]
