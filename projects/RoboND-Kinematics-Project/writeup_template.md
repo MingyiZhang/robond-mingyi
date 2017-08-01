@@ -19,7 +19,7 @@
 [image2]: ./misc_images/misc3.png
 [image3]: ./misc_images/misc2.png
 [img_kin]: ./misc_images/kinematics_demo.png
-[img_DH]: ./misc_images/joint_frame.svg
+[img_DH]: ./misc_images/joint_frame.png
 
 
 
