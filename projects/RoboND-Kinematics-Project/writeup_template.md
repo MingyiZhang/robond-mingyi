@@ -28,8 +28,12 @@
 
 Run command `roslaunch kuka_arm forward_kinematics.launch` and the screenshot is
 ![alt text][img_kin]
+The following figure shows the basic structure of Kuka KR210 robot.
 ![alt text][img_DH]
-One can find the DH parameters through the demo, or from the file `kr210.urdf.xacro`. All parameters are shown in the following figure and the table below:
+Eight frames associate to the base point, six joints and the gripper. The DH parameter are assigned by using the [algorithm](https://classroom.udacity.com/nanodegrees/nd209/parts/7b2fd2d7-e181-401e-977a-6158c77bf816/modules/8855de3f-2897-46c3-a805-628b5ecf045b/lessons/87c52cd9-09ba-4414-bc30-24ae18277d24/concepts/2f59c902-9c32-4b26-9e52-5e495ec14dba) in the course. Some of the DH parameter are shown in the figure.
+
+One can derive the DH parameter through the demo, or from the file `kr210.urdf.xacro`. The DH parameter is given as
+$a_i$
 
 
 #### 2. Using the DH parameter table you derived earlier, create individual transformation matrices about each joint. In addition, also generate a generalized homogeneous transform between base_link and gripper_link using only end-effector(gripper) pose.
