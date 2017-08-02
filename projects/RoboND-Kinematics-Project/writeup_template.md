@@ -33,6 +33,7 @@ The following figure shows the basic structure of Kuka KR210 robot.
 Eight frames associate to the base point, six joints and the gripper. The DH parameter are assigned by using the [algorithm](https://classroom.udacity.com/nanodegrees/nd209/parts/7b2fd2d7-e181-401e-977a-6158c77bf816/modules/8855de3f-2897-46c3-a805-628b5ecf045b/lessons/87c52cd9-09ba-4414-bc30-24ae18277d24/concepts/2f59c902-9c32-4b26-9e52-5e495ec14dba) in the course. Some of the DH parameter are shown in the figure.
 
 One can derive the DH parameter through the demo, or from the file `kr210.urdf.xacro`. First of all, let us read the initial state (relative positions and orientations) of the joints through the demo,
+
 | Joint |   X   | Y |    Z   | Roll-Pitch-Yaw |
 |:-----:|:-----:|:-:|:------:|:--------------:|
 |   1   |   0   | 0 |  0.33  |        0       |
@@ -44,6 +45,7 @@ One can derive the DH parameter through the demo, or from the file `kr210.urdf.x
 |   G   |  0.11 | 0 |    0   |        0       |
 
 Then we can derive the DH parameter
+
 | i | $\alpha_{i-1}$ | $a_{i-1}$ | $d_i$ | $\theta_i$ |
 |:-:|:-------------:|:---------:|:-----:|:---------:|
 | 1 |       0       |     0     |  0.75 |     q1    |
