@@ -25,23 +25,44 @@ def handle_calculate_IK(req):
         print "No valid poses received"
         return -1
     else:
-		
+
         ### Your FK code here
         # Create symbols
-	#
-	#   
-	# Create Modified DH parameters
-	#
-	#            
-	# Define Modified DH Transformation matrix
-	#
-	#
-	# Create individual transformation matrices
-	#
-	#
-	# Extract rotation matrices from the transformation matrices
-	#
-	#
+        q1, q2, q3, q4, q5, q6 = symbols('q1:7')
+    	#
+        # global constants
+        ## Identity matrix
+        I = Matrix([[1, 0, 0],
+                    [0, 1, 0],
+                    [0, 0, 1]])
+    	##
+        ## Pi
+        Pi = np.pi
+        ##
+        ## radian to degree
+        rtd = 180. / Pi
+        ## degree to radian
+        dtr = Pi / 180.
+    	# Create Modified DH parameters
+        s = {'alpha0': 0,     'a0': 0,      'd1': 0.75,  'theta1': q1,
+             'alpha1': -Pi/2, 'a1': 0.35,   'd2': 0,     'theta2': q2 - Pi/2,
+             'alpha2': 0,     'a2': 1.25,   'd3': 0,     'theta3': q3,
+             'alpha3': -Pi/2, 'a3': -0.054, 'd4': 1.5,   'theta4': q4,
+             'alpha4': Pi/2,  'a4': 0,      'd5': 0,     'theta5': q5,
+             'alpha5': -Pi/2, 'a5': 0,      'd6': 0,     'theta6': q6,
+             'alpha6': 0,     'a6': 0,      'dG': 0.303, 'thetaG': 0}
+    	#
+    	#
+    	# Define Modified DH Transformation matrix
+        
+    	#
+    	#
+    	# Create individual transformation matrices
+    	#
+    	#
+    	# Extract rotation matrices from the transformation matrices
+    	#
+    	#
         ###
 
         # Initialize service response
@@ -60,8 +81,8 @@ def handle_calculate_IK(req):
             (roll, pitch, yaw) = tf.transformations.euler_from_quaternion(
                 [req.poses[x].orientation.x, req.poses[x].orientation.y,
                     req.poses[x].orientation.z, req.poses[x].orientation.w])
-     
-            ### Your IK code here 
+
+            ### Your IK code here
 	    # Compensate for rotation discrepancy between DH parameters and Gazebo
 	    #
 	    #
@@ -69,7 +90,7 @@ def handle_calculate_IK(req):
 	    #
 	    #
             ###
-		
+
             # Populate response for the IK request
             # In the next line replace theta1,theta2...,theta6 by your joint angle variables
 	    joint_trajectory_point.positions = [theta1, theta2, theta3, theta4, theta5, theta6]
