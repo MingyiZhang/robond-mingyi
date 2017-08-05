@@ -110,9 +110,9 @@ $$
 where $p_{\text{wc}}$ is the position of the WC to frame 0.
 The position of the gripper to frame 0 is then given as
 $$
-V_{OG} = T^0_6\cdot V_{6G} = \left(d_G ~r_6^0\cdot \hat{z} + p_{\text{wc}}, ~1\right)^T
+V_{OG} = T^0_6\cdot V_{6G} = \left(p_{\text{wc}} + d_G ~r_6^0\cdot \hat{z}, ~1\right)^T = (p_{G}, 1)^T
 $$
-where $\hat{z}\equiv (0,0,1)^T$.
+where $\hat{z}\equiv (0,0,1)^T$. $r_6^0$ and $p_G$ encode the orientation and the position of frame G to the base frame. q1 to q6 will be obtained as functions of $p_G$ and $r_6^0$
 
 __step 2__: obtain q1, q2, q3 such that WC's pose is $p_{\text{wc}}\equiv (p_x, p_y, p_z)$.
 
@@ -167,19 +167,36 @@ $$
 q_2 = \frac{\pi}{2} - q_{23} - q_{21}
 $$
 
-__step 3__: 
+__step 3__: carry out q4, q5 and q6.
 
+By using p1, p2, p3, we can obtain $T^0_3$, then $T_{6}^3$ then can be given as
+$$
+T_{6}^3 = [T^0_3]^{-1} T^0_6 \equiv
+\begin{pmatrix}
+r_{11} & r_{12} & r_{13}  & k_1  \\
+r_{21} & r_{22} & r_{23} & k_2\\
+r_{31} & r_{32} & r_{33} & 0\\
+0 & 0 & 0 & 1
+\end{pmatrix}
+$$
+While $T_{6}^3$ can also be obtained by using $T^3_4$, $T^4_5$ and $T^5_6$
+$$
+T_{6}^3 =
+\begin{pmatrix}
+-\sin q_4 \sin q_6 + \cos q_4  \cos q_6 \cos q_5 & -\sin q_4 \cos q_6 -  \cos q_4 \sin q_6  \cos q_5 & - \cos q_4 \sin q_5  & -0.054  \\
+\sin q_5  \cos q_6 & -\sin q_5 \sin q_6 & \cos q_5 & 1.5\\
+-\sin q_4 \cos q_6 \cos q_5 - \sin q_6 \cos q_4 & \sin q_4 \sin q_6 \cos q_5 - \cos q_4 \cos q_6 & \sin q_4 \sin q_5 & 0\\
+0 & 0 & 0 & 1
+\end{pmatrix}
+$$
+Comparing the above two equations, we will get
+$$
+q_6 = \text{atan2}(-r_{22},~ r_{21})\\
+q_4 = \text{atan2}(r_{33},~ -r_{13})\\
+q_5 = \text{atan2}\left(\sqrt{r_{21}^2 + r_{22}^2},~ r_{23}\right)
+$$
+Here we assume that q5 is from 0 to $\pi$.
 
-
-
-
-
-
-
-
-And here's where you can draw out and show your math for the derivation of your theta angles.
-
-![alt text][image2]
 
 ### Project Implementation
 
