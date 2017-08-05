@@ -80,10 +80,28 @@ I_{3\times 3} & p_{3\times 1} \\
 $$
 where $r$ is a 3d rotation matrix, $I$ is the identity matrix and $p$ is a 3-vector.
 
+Moreover, between frame G and frame gripper_link there is an extra rotation, which is
+$$
+T_g^G = R_Y\left(-\frac{\pi}{2}\right)\cdot R_Z(\pi) =
+\begin{pmatrix}
+r_g^G & 0 \\
+0 & 1
+\end{pmatrix}, \quad \text{where}\quad
+r_g^G =
+\begin{pmatrix}
+0 & 0 & 1 \\
+0 & -1 & 0 \\
+1 & 0 & 0
+\end{pmatrix}
+$$
+
 Then the homogeneous transform between base_link and gripper_link is given as
-$$T^{0}_G = T^0_1\cdot T^1_2 \cdot~\cdots~\cdot T^6_G$$
-A vector $V_{OG}$ from the origin $O$ to the gripper can be obtained by using $T^0_G$ to transform the gripper pose in the gripper frame $V_G = (0,0,0,1)^T$:
-$$V_{OG} = T^0_G\cdot V_G$$
+$$T^{0}_g = T^0_1\cdot T^1_2 \cdot~\cdots~\cdot T^6_G \cdot T^G_g$$
+A vector $V_{Og}$ from the origin $O$ to the gripper can be obtained by using $T^0_g$ to transform the gripper pose in the gripper_link frame $V_g = (0,0,0,1)^T$:
+$$V_{Og} = T^0_g\cdot V_g$$
+
+
+
 
 
 
@@ -95,24 +113,42 @@ In order to obtain q1, q2, ..., q6 from the pose of the gripper, we follow the s
 
 __step 1__: Split the pose of the gripper to frame 0 into two parts.
 
-Since the WC is siting at the joint 5, the position of the gripper to frame 6 is given as
+In the problem of inverse kinematics, what we know in prior is the pose of the gripper to the origin, which is given by $T^0_g$
 $$
-V_{6G} = (0,0,d_G,1)^T
+T_g^0 =
+\begin{pmatrix}
+r^0_g & p_g \\
+0 & 1
+\end{pmatrix}
 $$
-The homogeneous transform $T^0_6$ from frame 0 to frame 6 is given as
+where $r^0_g$ gives the orientation and $p_g$ gives the position of the gripper. Remind the decomposition $T_g^0 = T^0_6\cdot T^6_G \cdot T^G_g$. We also have
 $$
-T^0_6 =
+T_g^0 = T^0_6\cdot T^6_G \cdot T^G_g =
 \begin{pmatrix}
 r^0_6 & p_{\text{wc}} \\
 0 & 1
 \end{pmatrix}
+\begin{pmatrix}
+1 & d_G \hat{z}\\
+0 & 1
+\end{pmatrix}
+\begin{pmatrix}
+r^G_g & 0 \\
+0 & 1
+\end{pmatrix}
+= \begin{pmatrix}
+r_6^0\cdot r_g^G & p_{\text{wc}} + d_G ~r_6^0\cdot \hat{z} \\
+0 & 1
+\end{pmatrix}
 $$
-where $p_{\text{wc}}$ is the position of the WC to frame 0.
-The position of the gripper to frame 0 is then given as
+Comparing the above two equations, one can immediately get
 $$
-V_{OG} = T^0_6\cdot V_{6G} = \left(p_{\text{wc}} + d_G ~r_6^0\cdot \hat{z}, ~1\right)^T = (p_{G}, 1)^T
+r_6^0 = r_g^0 \cdot (r_g^G)^{-1} = r_g^0\cdot r_g^G \\
+p_{\text{wc}} = p_g - d_G r_g^0 \cdot (r_g^G)^{-1} \cdot \hat{z} = p_g - d_G r_g^0 \cdot \hat{x}
 $$
-where $\hat{z}\equiv (0,0,1)^T$. $r_6^0$ and $p_G$ encode the orientation and the position of frame G to the base frame. q1 to q6 will be obtained as functions of $p_G$ and $r_6^0$
+where $\hat{z}\equiv (0,0,1)^T$, $\hat{x}\equiv (1,0,0)^T$ and $(r_g^G)^{-1} = r_g^G$. $p_{\text{wc}}$ is the position of the WC to frame 0.
+
+q1 to q6 will be obtained as functions of $p_{\text{wc}}$ and $r_6^0$.
 
 __step 2__: obtain q1, q2, q3 such that WC's pose is $p_{\text{wc}}\equiv (p_x, p_y, p_z)$.
 
