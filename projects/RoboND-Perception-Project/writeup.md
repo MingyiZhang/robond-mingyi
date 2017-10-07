@@ -6,13 +6,13 @@ All realization of Exercises 1-3 and the project are in [here](https://github.co
 #### 1. Complete Exercise 1 steps. Pipeline for filtering and RANSAC plane fitting implemented.
 - Convert ROS message to PCL data
 - Statistical Outlier Filter:
-    - number of neighboring points: __20__
-    - threshold scale factor: __0.3__
+    - number of neighboring points: __10__
+    - threshold scale factor: __0.1__
 - Voxel Grid Downsampling
-    - `LEAF_SIZE`: __0.005__
+    - `LEAF_SIZE`: __0.005__ (it seems smaller leaf size gives better recognition result.)
 - Passthrough over Z-Axis and Y-Axis
     - Z-Axis: __[0.6, 1.5]__
-    - Y-Axis(not necessary): __[-0.5, 0.5]__
+    - Y-Axis: __[-0.5, 0.5]__, (get rid of voxel cloud of boxes.)
 - RANSAC PLANE Filter
     - Maximum distance threshold: __0.01__
 
