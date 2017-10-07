@@ -10,3 +10,6 @@ This repository contains completed projects that I did when I was learning the [
 
     - [Robotic arm - Pick & Place](https://github.com/MingyiZhang/robond-mingyi/tree/master/projects/RoboND-Kinematics-Project)
         > Kenematics
+
+    - [3D Perception](https://github.com/MingyiZhang/robond-mingyi/tree/master/projects/RoboND-Perception-Project)
+        > Perception
