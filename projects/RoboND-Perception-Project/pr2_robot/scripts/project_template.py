@@ -59,8 +59,8 @@ def pcl_callback(pcl_msg):
 
     # TODO: Statistical Outlier Filtering
     flt = cloud.make_statistical_outlier_filter()
-    flt.set_mean_k(20)
-    flt.set_std_dev_mul_thresh(0.3)
+    flt.set_mean_k(10)
+    flt.set_std_dev_mul_thresh(0.1)
     cloud = flt.filter()
 
     # TODO: Voxel Grid Downsampling
@@ -160,7 +160,7 @@ def pcl_callback(pcl_msg):
 
         # Publish a label into RViz
         label_pos = list(white_cloud[pts_list[0]])
-        label_pos[2] += .3
+        label_pos[2] += .4
         object_markers_pub.publish(make_label(label,label_pos, index))
 
         # Add the detected object to the list of detected objects.
