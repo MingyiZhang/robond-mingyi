@@ -6,36 +6,60 @@ All realization of Exercises 1-3 and the project are in [here](https://github.co
 #### 1. Complete Exercise 1 steps. Pipeline for filtering and RANSAC plane fitting implemented.
 - Convert ROS message to PCL data
 - Statistical Outlier Filter:
-    - number of neighboring points: 20
-    - threshold scale factor: 0.3
+    - number of neighboring points: __20__
+    - threshold scale factor: __0.3__
 - Voxel Grid Downsampling
-    - `LEAF_SIZE`: 0.005
+    - `LEAF_SIZE`: __0.005__
 - Passthrough over Z-Axis and Y-Axis
-    - Z-Axis: [0.6, 1.5]
-    - Y-Axis(not necessary): [-0.5, 0.5]
+    - Z-Axis: __[0.6, 1.5]__
+    - Y-Axis(not necessary): __[-0.5, 0.5]__
 - RANSAC PLANE Filter
-    - Maximum distance threshold: 0.01
+    - Maximum distance threshold: __0.01__
 
 #### 2. Complete Exercise 2 steps: Pipeline including clustering for segmentation implemented.
 __Euclidean clustering__. After several attempts, the following parameter works fine
-- Tolerances for distance threshold: 0.01
-- Minimum cluster size: 30
-- Maximum cluster size: 10000 (seems not really matter for a large number)
+- Tolerances for distance threshold: __0.01__
+- Minimum cluster size: __30__
+- Maximum cluster size: __10000__ (seems not really matter for a large number)
 
 #### 3. Complete Exercise 3 Steps.  Features extracted and SVM trained.  Object recognition implemented.
+Support Vector Machine. Use the following setups.
+- images per object: __50__
+- Bins: 32
+- HSV: yes
+We can get a [model](https://github.com/MingyiZhang/robond-mingyi/tree/master/projects/RoboND-Perception-Project/models) (The `model_3.sav` file) which can recognize objects.
 
+And here is the confusion matrices after the training
 
-
-
-Here is an example of how to include an image in your writeup.
-
-![demo-1](https://user-images.githubusercontent.com/20687560/28748231-46b5b912-7467-11e7-8778-3095172b7b19.png)
+![alt text](https://github.com/MingyiZhang/robond-mingyi/blob/master/projects/RoboND-Perception-Project/imgs/confusion_matrix_3.png)
+![alt text](https://github.com/MingyiZhang/robond-mingyi/blob/master/projects/RoboND-Perception-Project/imgs/confusion_matrix_norm_3.png)
 
 ### Pick and Place Setup
 
 #### 1. For all three tabletop setups (`test*.world`), perform object recognition, then read in respective pick list (`pick_list_*.yaml`). Next construct the messages that would comprise a valid `PickPlace` request output them to `.yaml` format.
 
-And here's another image!
-![demo-2](https://user-images.githubusercontent.com/20687560/28748286-9f65680e-7468-11e7-83dc-f1a32380b89c.png)
+Follow the instruction, the PR2 can recognise the objects and perform Pick and Place.
 
-Spend some time at the end to discuss your code, what techniques you used, what worked and why, where the implementation might fail and how you might improve it if you were going to pursue this project further.  
+The code basically follows the instruction. I introduced three dictionaries `object_group_dict`, `color_pos_dict` and `dropbox_dict` to map object to group(box color), to map group(box color) to box(left or right) and to map box(left or right) to drop place position, respectively.
+```python
+object_group_dict = {}
+for obj in object_list_param:
+    object_group_dict[obj['name']] = obj['group']
+
+dropbox_dict = {}
+color_pos_dict = {}
+for box in dropbox_param:
+    dropbox_dict[box['name']] = box['position']
+    color_pos_dict[box['group']] = box['name']    
+```
+
+The final results are:
+- World 1: 100%
+
+    ![alt text](https://github.com/MingyiZhang/robond-mingyi/blob/master/projects/RoboND-Perception-Project/imgs/world_1.png)
+- World 2: 100%
+
+    ![alt text](https://github.com/MingyiZhang/robond-mingyi/blob/master/projects/RoboND-Perception-Project/imgs/world_2.png)
+- World 3: 100%
+
+    ![alt text](https://github.com/MingyiZhang/robond-mingyi/blob/master/projects/RoboND-Perception-Project/imgs/world_3.png)
