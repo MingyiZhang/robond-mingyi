@@ -4,16 +4,16 @@ All realization of Exercises 1-3 and the project are in [here](https://github.co
 
 ### Exercise 1, 2 and 3 pipeline implemented
 #### 1. Complete Exercise 1 steps. Pipeline for filtering and RANSAC plane fitting implemented.
-a. Convert ROS message to PCL data
-b. Statistical Outlier Filter:
+- Convert ROS message to PCL data
+- Statistical Outlier Filter:
     - number of neighboring points: 20
     - threshold scale factor: 0.3
-c. Voxel Grid Downsampling
+- Voxel Grid Downsampling
     - `LEAF_SIZE`: 0.005
-d. Passthrough over Z-Axis and Y-Axis
+- Passthrough over Z-Axis and Y-Axis
     - Z-Axis: [0.6, 1.5]
     - Y-Axis(not necessary): [-0.5, 0.5]
-e. RANSAC PLANE Filter
+- RANSAC PLANE Filter
     - Maximum distance threshold: 0.01
 
 #### 2. Complete Exercise 2 steps: Pipeline including clustering for segmentation implemented.
