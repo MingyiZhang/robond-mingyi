@@ -1,14 +1,32 @@
 ## Project: Perception Pick & Place
 
-
+All realization of Exercises 1-3 and the project are in [here](https://github.com/MingyiZhang/robond-mingyi/blob/master/projects/RoboND-Perception-Project/pr2_robot/scripts/project_template.py).
 
 ### Exercise 1, 2 and 3 pipeline implemented
 #### 1. Complete Exercise 1 steps. Pipeline for filtering and RANSAC plane fitting implemented.
+a. Convert ROS message to PCL data
+b. Statistical Outlier Filter:
+    - number of neighboring points: 20
+    - threshold scale factor: 0.3
+c. Voxel Grid Downsampling
+    - `LEAF_SIZE`: 0.005
+d. Passthrough over Z-Axis and Y-Axis
+    - Z-Axis: [0.6, 1.5]
+    - Y-Axis(not necessary): [-0.5, 0.5]
+e. RANSAC PLANE Filter
+    - Maximum distance threshold: 0.01
+
+#### 2. Complete Exercise 2 steps: Pipeline including clustering for segmentation implemented.
+__Euclidean clustering__. After several attempts, the following parameter works fine
+- Tolerances for distance threshold: 0.01
+- Minimum cluster size: 30
+- Maximum cluster size: 10000 (seems not really matter for a large number)
+
+#### 3. Complete Exercise 3 Steps.  Features extracted and SVM trained.  Object recognition implemented.
 
 
-#### 2. Complete Exercise 2 steps: Pipeline including clustering for segmentation implemented.  
 
-#### 2. Complete Exercise 3 Steps.  Features extracted and SVM trained.  Object recognition implemented.
+
 Here is an example of how to include an image in your writeup.
 
 ![demo-1](https://user-images.githubusercontent.com/20687560/28748231-46b5b912-7467-11e7-8778-3095172b7b19.png)
