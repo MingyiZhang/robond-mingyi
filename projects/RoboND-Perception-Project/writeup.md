@@ -23,10 +23,11 @@ __Euclidean clustering__. After several attempts, the following parameter works 
 - Maximum cluster size: __10000__ (seems not really matter for a large number)
 
 #### 3. Complete Exercise 3 Steps.  Features extracted and SVM trained.  Object recognition implemented.
-Support Vector Machine. Use the following setups.
+__Support Vector Machine__. Use the following setups.
 - images per object: __50__
-- Bins: 32
-- HSV: yes
+- Bins: __32__
+- HSV: __Yes__
+
 We can get a [model](https://github.com/MingyiZhang/robond-mingyi/tree/master/projects/RoboND-Perception-Project/models) (The `model_3.sav` file) which can recognize objects.
 
 And here is the confusion matrices after the training
@@ -54,12 +55,12 @@ for box in dropbox_param:
 ```
 
 The final results are:
-- World 1: 100%
+- World 1: 100%, [YAML file](https://github.com/MingyiZhang/robond-mingyi/blob/master/projects/RoboND-Perception-Project/outputs/output_1.yaml)
 
     ![alt text](https://github.com/MingyiZhang/robond-mingyi/blob/master/projects/RoboND-Perception-Project/imgs/world_1.png)
-- World 2: 100%
+- World 2: 100%, [YAML file](https://github.com/MingyiZhang/robond-mingyi/blob/master/projects/RoboND-Perception-Project/outputs/output_2.yaml)
 
     ![alt text](https://github.com/MingyiZhang/robond-mingyi/blob/master/projects/RoboND-Perception-Project/imgs/world_2.png)
-- World 3: 100%
+- World 3: 100%, [YAML file](https://github.com/MingyiZhang/robond-mingyi/blob/master/projects/RoboND-Perception-Project/outputs/output_3.yaml)
 
     ![alt text](https://github.com/MingyiZhang/robond-mingyi/blob/master/projects/RoboND-Perception-Project/imgs/world_3.png)
