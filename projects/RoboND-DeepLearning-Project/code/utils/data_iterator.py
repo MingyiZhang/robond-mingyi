@@ -161,4 +161,4 @@ class BatchIteratorSimple(Iterator):
             return batch_x
 
         else:
-            return batch_x, batch_ybatch_y
+            return batch_x, batch_y

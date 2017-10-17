@@ -212,9 +212,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     model = model_tools.load_network(args.weight_file)
-    print(model.summary())
     image_hw = model.layers[0].output_shape[1]
-    print(image_hw)
 
     if args.pred_viz:
         overlay_plot = visualization.SideBySidePlot('Segmentation Overlay', image_hw)
