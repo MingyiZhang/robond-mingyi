@@ -34,7 +34,25 @@ I tried to collect images from the simulator, however it always crashes after ta
 
 The suggested architecture for this project is a Fully Convolutional Encoder-Decoder neural network.
 
-The neural network contains no fully connected layers. It can be seperated into two main parts: encoder part and decoder part, constructed by encoder blocks and decoder blocks, respectively. The encoder block is defined as
+Unlike standard ConvNets using fully connected layers to do classification, the network that we constructed contains only several kinds of convolutional layers because the project is mainly focusing on semantic segmentation. Fully connected layer is not capable to accomplish the job.
+
+Our Fully Convolutional Encoder-Decoder architecture contains two main parts: encoder and decoder, which are connected by a 1x1 convolutional layer.
+
+The encoder is constructed by several encoder blocks. The encoder block are defined as
+```python
+def encoder_block(input_layer, filters, strides):
+
+    output_layer = SeparableConv2DKeras(filters=filters, kernel_size=3, strides=1,
+                             padding='same', activation='relu')(input_layer)
+
+    output_layer = separable_conv2d_batchnorm(output_layer, filters, strides)
+
+    return output_layer
+```
+![alt text](https://github.com/MingyiZhang/robond-mingyi/blob/master/projects/RoboND-DeepLearning-Project/imgs/encoder_h)
+
+
+The neural network contains no fully connected layers, because the aim of the project . It can be seperated into two main parts: encoder part and decoder part, constructed by encoder blocks and decoder blocks, respectively. The encoder block is defined as
 ```python
 def encoder_block(input_layer, filters, strides):
 
@@ -167,4 +185,4 @@ In detail,
 3. when target is far away, both models doesn't perform very well. The accuracy is around 50%... It might because the small amount of training set.
 
 ### Conclusions
-This project shows how difficult the semantic segmentation is and how difficult to let a drone to follow a certain person automatically. Even with the simply environment setting (target is always in red) in this project, our model does not perform well enough when the target far away. 
+This project shows how difficult the semantic segmentation is and how difficult to let a drone to follow a certain person automatically. Even with the simply environment setting (target is always in red) in this project, our model does not perform well enough when the target far away.
