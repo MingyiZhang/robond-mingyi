@@ -49,7 +49,7 @@ def encoder_block(input_layer, filters, strides):
 
     return output_layer
 ```
-![alt text](https://github.com/MingyiZhang/robond-mingyi/blob/master/projects/RoboND-DeepLearning-Project/imgs/encoder_h)
+![alt text](https://github.com/MingyiZhang/robond-mingyi/blob/master/projects/RoboND-DeepLearning-Project/imgs/encoder_h.png)
 
 
 The neural network contains no fully connected layers, because the aim of the project . It can be seperated into two main parts: encoder part and decoder part, constructed by encoder blocks and decoder blocks, respectively. The encoder block is defined as
