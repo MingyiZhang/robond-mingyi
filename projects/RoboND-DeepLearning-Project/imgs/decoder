@@ -1,0 +1,15 @@
+digraph G{
+    node [shape=record]
+    
+    subgraph cluster {
+        style=filled;
+        color=lightgrey;
+        node [style=filled,color=white];
+        BilinearUpSampling2D -> Concatenate -> SeparableConv2DKeras -> BatchNormalization;
+        label = "decoder                    ";
+    }
+    
+    Input -> BilinearUpSampling2D
+    encoder -> Concatenate
+    BatchNormalization -> Output
+}
