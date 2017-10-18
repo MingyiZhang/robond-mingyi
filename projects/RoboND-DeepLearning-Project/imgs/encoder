@@ -1,0 +1,16 @@
+digraph G{
+    node [shape=record]
+    
+    subgraph cluster {
+        style=filled;
+        color=lightgrey;
+        node [style=filled,color=white];
+        a[label="SeparableConv2DKeras"]
+        b[label="SeparableConv2DKeras"]
+        a -> b -> BatchNormalization;
+        label = "encoder block    ";
+    }
+    
+    Input -> a 
+    BatchNormalization -> Output
+}

@@ -6,10 +6,10 @@ digraph G{
         color=lightgrey;
         node [style=filled,color=white];
         BilinearUpSampling2D -> Concatenate -> SeparableConv2DKeras -> BatchNormalization;
-        label = "decoder                    ";
+        label = "decoder block    ";
     }
-    
+    e[label="encoder block"]
     Input -> BilinearUpSampling2D
-    encoder -> Concatenate
+    e -> Concatenate
     BatchNormalization -> Output
 }
