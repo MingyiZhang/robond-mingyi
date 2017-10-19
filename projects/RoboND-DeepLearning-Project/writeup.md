@@ -34,11 +34,16 @@ I tried to collect images from the simulator, however it always crashes after ta
 
 The suggested architecture for this project is a Fully Convolutional Encoder-Decoder neural network.
 
-Unlike standard ConvNets using fully connected layers to do classification, the network that we constructed contains only several kinds of convolutional layers because the project is mainly focusing on semantic segmentation. Fully connected layer is not capable to accomplish the job.
+Unlike standard ConvNets using fully connected layers to do classification, the network that we constructed contains only several kinds of convolutional layers because the project is mainly focusing on semantic segmentation. Fully connected layer is not capable to accomplish the job because it lose the spatial information of the object which is essential to semantic segmentation.
 
 Our Fully Convolutional Encoder-Decoder architecture contains two main parts: encoder and decoder, which are connected by a 1x1 convolutional layer.
+![alt text](https://github.com/MingyiZhang/robond-mingyi/blob/master/projects/RoboND-DeepLearning-Project/imgs/ed.png)
 
-The encoder is constructed by several encoder blocks. The encoder block are defined as
+The encoder-decoder architecture is one of the major architectures used to attack the problem of semantic segmentation. Encoder reduces the spatial dimension and pick out features of object, while decoder recovers the object details and spatial dimension.
+
+The 1x1 convolutional layer between encoder and decoder maintains both the spatial information and features of the object, propagates object information from encoder to decoder. Furthermore, because the image recreated from the decoder has information loss due to the dimension reduction in the encoder, a direct flow from internal convolutional layers of the encoder to the decoder is needed, such that the output image contains pixel level information from the original image.
+
+In the model, the encoder is constructed by several encoder blocks. Each encoder block has the same structure: with two separable convolutional layers (in order to emphasis and obtain more relevant patterns from the input images) and one batch normalization layer
 ```python
 def encoder_block(input_layer, filters, strides):
 
@@ -51,19 +56,7 @@ def encoder_block(input_layer, filters, strides):
 ```
 ![alt text](https://github.com/MingyiZhang/robond-mingyi/blob/master/projects/RoboND-DeepLearning-Project/imgs/encoder_h.png)
 
-
-The neural network contains no fully connected layers, because the aim of the project . It can be seperated into two main parts: encoder part and decoder part, constructed by encoder blocks and decoder blocks, respectively. The encoder block is defined as
-```python
-def encoder_block(input_layer, filters, strides):
-
-    output_layer = SeparableConv2DKeras(filters=filters, kernel_size=3, strides=1,
-                             padding='same', activation='relu')(input_layer)
-
-    output_layer = separable_conv2d_batchnorm(output_layer, filters, strides)
-
-    return output_layer
-```
-and the decoder block is defined as
+The decoder is formed by several decoder blocks. Each has four different layers: bilinear upsampling layer, concatenate layer, separable convolutional layer and batch normalization layer.
 ```python
 def decoder_block(small_ip_layer, large_ip_layer, filters):
 
@@ -75,9 +68,16 @@ def decoder_block(small_ip_layer, large_ip_layer, filters):
 
     return output_layer
 ```
-In the encoder block, there are two separable convolutional layers (in order to emphasis and obtain more relevant patterns from the input images) and one batch normalization layer; while in the decoder block, there are one bilinear upsampling layer, one concatenate layer which merge two layers of the same spatial dimensions, one seperable convolutional layer and one batch normalization layer. The basic structure of my networks is a simplified U-net or [SegNet](http://blog.qure.ai/notes/semantic-segmentation-deep-learning-review).
+![alt text](https://github.com/MingyiZhang/robond-mingyi/blob/master/projects/RoboND-DeepLearning-Project/imgs/decoder_h.png)
+
+We can find there are several basic layers used for constructing the network:
+- (depthwise) separable convolutional layer: first convolute on each channel with individual convolutional kernels, then do 1x1 convolution. With the same input size and output size, the separable convolutional layer has much less parameters than the standard convolutional layer. Benefit:1. model performs faster; 2. preventing overfitting.
+- batch normalization layer: normalization via mini-batch. Benefit: 1. accelerating training by reducing internal covariate shift; 2. preventing overfitting by introducing noise.
+- bilinear upsampling layer: up-size the spatial dimension of the input.
+
 
 After several attempts, I have two models, one with 3 encoder blocks and 3 decoder blocks,
+
 ```python
 def fcn_model(inputs, num_classes):
 
@@ -137,6 +137,9 @@ def fcn_model(inputs, num_classes):
 
      return layers.Conv2D(num_classes, 3, activation='softmax', padding='same')(x)
  ```
+ | 3e3d | 5e5d |
+|------|------|
+| ![alt text](https://github.com/MingyiZhang/robond-mingyi/blob/master/projects/RoboND-DeepLearning-Project/imgs/3e3d.png) | ![alt text](https://github.com/MingyiZhang/robond-mingyi/blob/master/projects/RoboND-DeepLearning-Project/imgs/5e5d.png)     |
 
 ### Model Training
 
