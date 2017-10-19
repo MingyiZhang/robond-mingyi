@@ -37,6 +37,7 @@ The suggested architecture for this project is a Fully Convolutional Encoder-Dec
 Unlike standard ConvNets using fully connected layers to do classification, the network that we constructed contains only several kinds of convolutional layers because the project is mainly focusing on semantic segmentation. Fully connected layer is not capable to accomplish the job because it lose the spatial information of the object which is essential to semantic segmentation.
 
 Our Fully Convolutional Encoder-Decoder architecture contains two main parts: encoder and decoder, which are connected by a 1x1 convolutional layer.
+
 ![alt text](https://github.com/MingyiZhang/robond-mingyi/blob/master/projects/RoboND-DeepLearning-Project/imgs/ed.png)
 
 The encoder-decoder architecture is one of the major architectures used to attack the problem of semantic segmentation. Encoder reduces the spatial dimension and pick out features of object, while decoder recovers the object details and spatial dimension.
@@ -190,4 +191,4 @@ In detail,
 ### Conclusions
 This project shows how difficult the semantic segmentation is and how difficult to let a drone to follow a certain person automatically. Even with the simply environment setting (target is always in red) in this project, our model does not perform well enough when the target far away.
 
-With this data, the model in the project would not work well for following another object(dog, cat, car, etc). This is because the dataset only contains a particular type of target, even for following another different human, the model would have a hard time. If we want our structure to work well on another object, one need to collect enough data with the target inside, and train the model with the new dataset. 
+With this data, the model in the project would not work well for following another object(dog, cat, car, etc). This is because the dataset only contains a particular type of target, even for following another different human, the model would have a hard time. If we want our structure to work well on another object, one need to collect enough data with the target inside, and train the model with the new dataset.
