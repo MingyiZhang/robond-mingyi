@@ -189,3 +189,5 @@ In detail,
 
 ### Conclusions
 This project shows how difficult the semantic segmentation is and how difficult to let a drone to follow a certain person automatically. Even with the simply environment setting (target is always in red) in this project, our model does not perform well enough when the target far away.
+
+With this data, the model in the project would not work well for following another object(dog, cat, car, etc). This is because the dataset only contains a particular type of target, even for following another different human, the model would have a hard time. If we want our structure to work well on another object, one need to collect enough data with the target inside, and train the model with the new dataset. 
