@@ -1,0 +1,8 @@
+digraph G{
+    node [shape=record]
+    rankdir="LR"
+    
+    encoder -> decoder
+    input -> encoder -> c11 -> decoder -> output
+    c11[label="Conv2D(1x1)"]
+}
