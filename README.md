@@ -13,3 +13,6 @@ This repository contains completed projects that I did when I was learning the [
 
     - [3D Perception](https://github.com/MingyiZhang/robond-mingyi/tree/master/projects/RoboND-Perception-Project)
         > Perception
+
+    - [Follow Me](https://github.com/MingyiZhang/robond-mingyi/tree/master/projects/RoboND-DeepLearning-Project)
+        > Deep Learning
